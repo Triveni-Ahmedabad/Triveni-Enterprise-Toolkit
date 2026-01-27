@@ -24,11 +24,9 @@ type App struct {
 	Version string
 }
 
-func NewApp() *App {
 	return &App{
-		Version: "1.14.0",
+		Version: "1.14.2",
 	}
-}
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
@@ -333,7 +331,6 @@ func (a *App) InstallSoftware(name string) string {
 	destPath := filepath.Join(TempDir, targetSw.Name+fileExt)
 
 	// Logic: Embedded -> NAS -> Internet
-	useNas := checkNasAvailability(config.NasBasePath)
 	installerPath := ""
 
 	if targetSw.IsEmbedded {
@@ -341,23 +338,41 @@ func (a *App) InstallSoftware(name string) string {
 		installerPath = extractEmbeddedScript(targetSw.NasPath)
 	}
 
-	if installerPath == "" && useNas {
-		fullNasPath := filepath.Join(config.NasBasePath, targetSw.NasPath)
-		if fileExists(fullNasPath) {
-			err := copyFile(fullNasPath, destPath)
-			if err == nil {
-				installerPath = destPath
+	if installerPath == "" {
+		// Try multiple NAS search roots for better reliability
+		nasRoots := []string{
+			config.NasBasePath,
+			"\\\\174.156.4.3\\fjt\\Automations-Priyanshu",
+			"\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\Basic sw",
+			"\\\\174.156.4.3\\fjt\\Required softwares\\Automation Software\\Automations-Priyanshu",
+		}
+
+		for _, root := range nasRoots {
+			if root == "" {
+				continue
+			}
+			if checkNasAvailability(root) {
+				fullNasPath := filepath.Join(root, targetSw.NasPath)
+				if fileExists(fullNasPath) {
+					err := copyFile(fullNasPath, destPath)
+					if err == nil {
+						installerPath = destPath
+						break
+					}
+				}
 			}
 		}
 	}
 
 	if installerPath == "" {
 		// Local Fallback: Check if file exists in the current directory or a relative path
-		// This is useful if the user cloned the repo and has the folders next to the exe
 		if fileExists(targetSw.NasPath) {
 			installerPath = targetSw.NasPath
 		} else {
 			// Fallback to Internet
+			if targetSw.DownloadUrl == "" {
+				return "❌ Error: Not found on NAS and no Download URL provided for " + targetSw.Name
+			}
 			err := downloadFile(targetSw.DownloadUrl, destPath)
 			if err != nil {
 				return "Download Failed: " + err.Error()
