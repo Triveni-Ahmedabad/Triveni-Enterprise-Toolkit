@@ -147,8 +147,12 @@ function App() {
     };
 
     const handleAction = (promise: Promise<string>, softwareName?: string) => {
-        setLoading(true);
-        setInstallLog("Executing Module Task...");
+        // Only set global blocking loading if no softwareName is provided (system-wide tasks)
+        if (!softwareName) {
+            setLoading(true);
+        }
+
+        setInstallLog(softwareName ? `Task Started: ${softwareName}...` : "Executing Module Task...");
 
         if (softwareName) {
             setInstallProgress(prev => ({ ...prev, [softwareName]: 0 }));
@@ -176,7 +180,7 @@ function App() {
                 }
 
                 setInstallLog(result);
-                setLoading(false);
+                // No global loading to turn off for individual apps
                 refreshData();
 
                 setTimeout(() => {
@@ -192,12 +196,20 @@ function App() {
                         return updated;
                     });
                 }, 5000);
+            }).catch(err => {
+                clearInterval(progressInterval);
+                setInstallLog("Error: " + err);
+                setTimeout(() => setInstallLog(""), 5000);
             });
         } else {
             promise.then((result) => {
                 setInstallLog(result);
                 setLoading(false);
                 refreshData();
+                setTimeout(() => setInstallLog(""), 5000);
+            }).catch(err => {
+                setInstallLog("Task Failed: " + err);
+                setLoading(false);
                 setTimeout(() => setInstallLog(""), 5000);
             });
         }
@@ -262,7 +274,7 @@ function App() {
                     <img src="logo.png" alt="Triveni Logo" style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px var(--accent-primary))' }} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span>TRIVENI TOOLKIT</span>
-                        <span style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', letterSpacing: '1px', marginTop: '-4px' }}>VERSION 1.13.1</span>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', letterSpacing: '1px', marginTop: '-4px' }}>VERSION 1.14.0</span>
                     </div>
                 </div>
 

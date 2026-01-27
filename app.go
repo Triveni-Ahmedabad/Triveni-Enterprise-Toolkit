@@ -26,7 +26,7 @@ type App struct {
 
 func NewApp() *App {
 	return &App{
-		Version: "1.13.1",
+		Version: "1.14.0",
 	}
 }
 
@@ -68,27 +68,42 @@ type HardwareInfo struct {
 
 func isSoftwareInstalled(name string) bool {
 	// Map of software names to their common installation files (exe)
-	// Key: Software Name, Value: List of possible executable paths relative to Program Files / AppData
 	softwareFiles := map[string][]string{
-		"Google Chrome":  {"Google\\Chrome\\Application\\chrome.exe"},
-		"7-Zip":          {"7-Zip\\7zFM.exe", "7-Zip\\7z.exe"},
-		"WinRAR":         {"WinRAR\\WinRAR.exe"},
-		"Notepad++":      {"Notepad++\\notepad++.exe"},
-		"VS Code":        {"Microsoft VS Code\\Code.exe"},
-		"VLC Media":      {"VideoLAN\\VLC\\vlc.exe"},
-		"Lightshot":      {"Skillbrains\\lightshot\\Lightshot.exe"},
-		"Adobe Reader":   {"Adobe\\Acrobat Reader DC\\Reader\\AcroRd32.exe", "Adobe\\Reader\\AcroRd32.exe"},
-		"Firefox":        {"Mozilla Firefox\\firefox.exe"},
-		"Java JDK":       {"Java\\jdk-17\\bin\\java.exe", "Java\\jdk-23\\bin\\java.exe", "Java\\jdk-23.0.1\\bin\\java.exe"},
-		"TightVNC":       {"TightVNC\\tvnserver.exe", "TightVNC\\tvnviewer.exe"},
-		"AnyDesk":        {"AnyDesk\\AnyDesk.exe"},
-		"Git":            {"Git\\bin\\git.exe"},
-		"Node.js":        {"nodejs\\node.exe"},
-		"Python 3":       {"Python39\\python.exe", "Python310\\python.exe"},
-		"Docker Desktop": {"Docker\\Docker\\resources\\bin\\docker.exe"},
-		"MongoDB":        {"MongoDB\\Server\\7.0\\bin\\mongod.exe"},
-		"SQLyog":         {"SQLyog\\SQLyog.exe"},
-		"Postman":        {"Postman\\Postman.exe"},
+		"Google Chrome":   {"Google\\Chrome\\Application\\chrome.exe"},
+		"7-Zip":           {"7-Zip\\7zFM.exe", "7-Zip\\7z.exe"},
+		"WinRAR":          {"WinRAR\\WinRAR.exe"},
+		"Notepad++":       {"Notepad++\\notepad++.exe"},
+		"VS Code":         {"Microsoft VS Code\\Code.exe"},
+		"VLC Media":       {"VideoLAN\\VLC\\vlc.exe"},
+		"Lightshot":       {"Skillbrains\\lightshot\\Lightshot.exe"},
+		"Adobe Reader":    {"Adobe\\Acrobat Reader DC\\Reader\\AcroRd32.exe", "Adobe\\Reader\\AcroRd32.exe"},
+		"Firefox":         {"Mozilla Firefox\\firefox.exe"},
+		"Java JDK":        {"Java\\jdk-17\\bin\\java.exe", "Java\\jdk-23\\bin\\java.exe", "Java\\jdk-23.0.1\\bin\\java.exe"},
+		"TightVNC":        {"TightVNC\\tvnserver.exe", "TightVNC\\tvnviewer.exe"},
+		"AnyDesk":         {"AnyDesk\\AnyDesk.exe"},
+		"Git":             {"Git\\bin\\git.exe"},
+		"Node.js":         {"nodejs\\node.exe"},
+		"Python 3":        {"Python39\\python.exe", "Python310\\python.exe"},
+		"Docker Desktop":  {"Docker\\Docker\\resources\\bin\\docker.exe"},
+		"MongoDB":         {"MongoDB\\Server\\7.0\\bin\\mongod.exe"},
+		"SQLyog":          {"SQLyog\\SQLyog.exe"},
+		"Postman":         {"Postman\\Postman.exe"},
+		"RabbitMQ Server": {"RabbitMQ Server\\rabbitmq_server-3.11.3\\sbin\\rabbitmqctl.bat"},
+		"ElasticSearch":   {"Elastic\\Elasticsearch\\8.11.1\\bin\\elasticsearch-service.bat"},
+	}
+
+	// Service Check Fallback for Middleware
+	if name == "RabbitMQ Server" || name == "ElasticSearch" {
+		serviceName := "RabbitMQ"
+		if name == "ElasticSearch" {
+			serviceName = "elasticsearch"
+		}
+		psCmd := fmt.Sprintf("Get-Service '%s' -ErrorAction SilentlyContinue", serviceName)
+		cmd := exec.Command("powershell", "-Command", psCmd)
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		if err := cmd.Run(); err == nil {
+			return true
+		}
 	}
 
 	searchPaths := []string{
