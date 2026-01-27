@@ -45,19 +45,36 @@ function Show-Header {
 }
 
 function Download-Or-Copy-Ops {
-    param($FileName, $NasSource, $WebUrl)
-    $Dest = "$env:TEMP\$FileName"
-    $NasFile = "$NasSource\$FileName"
+    param($FileNames, $NasSources, $WebUrl)
     
-    if (Test-Path $NasFile) {
-        Write-Host "   Found $FileName on NAS. Copying..." -ForegroundColor Green
-        try { Copy-Item -Path $NasFile -Destination $Dest -Force; return $Dest }
-        catch { Write-Host "   Failed to copy from NAS: $($_.Exception.Message)" -ForegroundColor Yellow }
+    # $FileNames can be a single string or an array of possible names
+    $FileList = @($FileNames)
+    $SourceList = @($NasSources)
+    
+    foreach ($Source in $SourceList) {
+        foreach ($Name in $FileList) {
+            $NasFile = Join-Path $Source $Name
+            $Dest = Join-Path $env:TEMP $Name
+            
+            if (Test-Path $NasFile) {
+                Write-Host "   Found $Name on NAS ($Source). Copying..." -ForegroundColor Green
+                try { 
+                    Copy-Item -Path $NasFile -Destination $Dest -Force
+                    return $Dest 
+                }
+                catch { 
+                    Write-Host "   Failed to copy $Name from NAS: $($_.Exception.Message)" -ForegroundColor Yellow 
+                }
+            }
+        }
     }
     
-    Write-Host "   Downloading $FileName from Web..." -ForegroundColor Yellow
+    # Web Fallback if NAS fails
+    $PrimaryName = $FileList[0]
+    $Dest = Join-Path $env:TEMP $PrimaryName
+    Write-Host "   Downloading $PrimaryName from Web..." -ForegroundColor Yellow
     try { Invoke-WebRequest -Uri $WebUrl -OutFile $Dest; return $Dest }
-    catch { throw "Failed to download $FileName." }
+    catch { throw "Failed to download $PrimaryName from web." }
 }
 
 # -------------------------------------------------------------------------
@@ -68,10 +85,13 @@ function Install-RabbitMQ {
     $ErrorActionPreference = "Stop"
 
     # Parameters
-    $NasPath = "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic"
+    $NasPath1 = "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic"
+    $NasPath2 = "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu"
+    $NasPaths = @($NasPath1, $NasPath2)
+
     $ErlangExe = "otp_win64_25.1.2.exe"
     $ErlangUrl = "https://github.com/erlang/otp/releases/download/OTP-25.1.2/otp_win64_25.1.2.exe"
-    $RabbitExe = "rabbitmq-server-3.11.3.exe"
+    $RabbitExes = @("rabbitmq-server-3.11.3.exe", "RabbitMQ Latest.exe")
     $RabbitUrl = "https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.11.3/rabbitmq-server-3.11.3.exe"
     $RabbitVersion = "3.11.3"
     try {
@@ -82,8 +102,8 @@ function Install-RabbitMQ {
         }
         else {
             Write-Host ">>> Getting Installers..." -ForegroundColor Yellow
-            $LocalErlang = Download-Or-Copy-Ops $ErlangExe $NasPath $ErlangUrl
-            $LocalRabbit = Download-Or-Copy-Ops $RabbitExe $NasPath $RabbitUrl
+            $LocalErlang = Download-Or-Copy-Ops $ErlangExe $NasPaths $ErlangUrl
+            $LocalRabbit = Download-Or-Copy-Ops $RabbitExes $NasPaths $RabbitUrl
 
             Write-Host "RUN: Installing Erlang (Interactive)..." -ForegroundColor Yellow
             Write-Host "... Trying Silent Install..." -ForegroundColor Gray
@@ -308,14 +328,21 @@ function Install-ElasticSearch {
 
     $ElasticVersion = "8.11.1"
     $ZipName = "elasticsearch-8.11.1-windows-x86_64.zip"
-    $NasPath = "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic"
+    $NasPaths = @(
+        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic",
+        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu"
+    )
     $WebUrl = "https://artifacts.elastic.co/downloads/elasticsearch/$ZipName"
     
     $InstallDirRoot = "C:\Program Files\Elastic\Elasticsearch"
     $ElasticInstallDir = "$InstallDirRoot\$ElasticVersion"
     $ProgramDataDir = "C:\ProgramData\Elastic\Elasticsearch"
     $JavaHome = "C:\Program Files\Java\jdk-17"
-    $NetworkJdkPath = "\\174.156.4.3\fjt\Required softwares\Update - Dev System\jdk-17.0.6_windows-x64_bin.exe"
+    $NetworkJdkPaths = @(
+        "\\174.156.4.3\fjt\Required softwares\Update - Dev System\jdk-17.0.6_windows-x64_bin.exe",
+        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic\jdk-17.0.6_windows-x64_bin.exe",
+        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\jdk-17.0.6_windows-x64_bin.exe"
+    )
 
     try {
         if (Test-Path "$ElasticInstallDir\bin\elasticsearch-service.bat") {
@@ -323,14 +350,24 @@ function Install-ElasticSearch {
         }
         else {
             if (-not (Test-Path $InstallDirRoot)) { New-Item -Path $InstallDirRoot -ItemType Directory -Force | Out-Null }
-            $LocalZipPath = "$env:TEMP\$ZipName"
-            $NasZipPath = "$NasPath\$ZipName"
+            $LocalZipPath = Join-Path $env:TEMP $ZipName
             $FileReady = $false
 
-            if (Test-Path $NasZipPath) {
-                Write-Host "   Copying ZIP from NAS..." -ForegroundColor Green
-                try { Copy-Item -Path $NasZipPath -Destination $LocalZipPath -Force; $FileReady = $true } catch {}
+            foreach ($NasPath in $NasPaths) {
+                $NasZipPath = Join-Path $NasPath $ZipName
+                if (Test-Path $NasZipPath) {
+                    Write-Host "   Found ZIP on NAS ($NasPath). Copying..." -ForegroundColor Green
+                    try { 
+                        Copy-Item -Path $NasZipPath -Destination $LocalZipPath -Force
+                        $FileReady = $true
+                        break
+                    }
+                    catch {
+                        Write-Host "   Failed to copy from NAS ($NasPath): $($_.Exception.Message)" -ForegroundColor Yellow
+                    }
+                }
             }
+
             if (-not $FileReady) {
                 Write-Host "   INFO: Downloading ZIP from Web..." -ForegroundColor Yellow
                 Invoke-WebRequest -Uri $WebUrl -OutFile $LocalZipPath
@@ -345,8 +382,22 @@ function Install-ElasticSearch {
         if (-not (Test-Path "$JavaHome\bin\java.exe")) {
             Write-Host "JDK: Installing JDK (Interactive)..." -ForegroundColor Yellow
             $LocalJdkPath = "$env:TEMP\jdk-17-installer.exe"
-            if (Test-Path $NetworkJdkPath) { Copy-Item -Path $NetworkJdkPath -Destination $LocalJdkPath -Force }
-            if (Test-Path $LocalJdkPath) { Start-Process -FilePath $LocalJdkPath -Wait }
+            $JdkReady = $false
+            foreach ($NetPath in $NetworkJdkPaths) {
+                if (Test-Path $NetPath) {
+                    Write-Host "   Found JDK on NAS ($NetPath). Copying..." -ForegroundColor Green
+                    try { 
+                        Copy-Item -Path $NetPath -Destination $LocalJdkPath -Force
+                        $JdkReady = $true
+                        break
+                    }
+                    catch {}
+                }
+            }
+            if ($JdkReady) { Start-Process -FilePath $LocalJdkPath -Wait }
+            else { 
+                Write-Host "   WARN: JDK not found on NAS. Skipping JDK install." -ForegroundColor Red 
+            }
         }
 
         [System.Environment]::SetEnvironmentVariable("JAVA_HOME", $null, "User")
