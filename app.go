@@ -24,9 +24,11 @@ type App struct {
 	Version string
 }
 
+func NewApp() *App {
 	return &App{
 		Version: "1.14.2",
 	}
+}
 
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
