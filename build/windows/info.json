@@ -1,0 +1,15 @@
+{
+	"fixed": {
+		"file_version": "{{.Info.ProductVersion}}"
+	},
+	"info": {
+		"0000": {
+			"ProductVersion": "1.0.0.0",
+			"CompanyName": "Triveni IT",
+			"FileDescription": "Triveni SysAdmin Toolkit Dashboard",
+			"LegalCopyright": "Copyright © 2026 Triveni IT",
+			"ProductName": "Triveni SysAdmin Toolkit",
+			"Comments": "Administrative dashboard for software installation."
+		}
+	}
+}

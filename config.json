@@ -1,0 +1,365 @@
+{
+  "nas_base_path": "\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\Basic sw",
+  "software_list": [
+    {
+      "name": "Google Chrome",
+      "version": "Latest",
+      "nas_path": "ChromeSetup.exe",
+      "download_url": "https://dl.google.com/chrome/install/latest/chrome_installer.exe",
+      "install_args": [
+        "/silent",
+        "/install"
+      ],
+      "uninstall_args": [
+        "wmic product where \"name like 'Google Chrome'\" call uninstall /nointeractive"
+      ],
+      "description": "Google Chrome Browser",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
+      "name": "7-Zip",
+      "version": "24.08",
+      "nas_path": "7z2408-x64.exe",
+      "download_url": "https://www.7-zip.org/a/7z2408-x64.exe",
+      "install_args": [
+        "/S"
+      ],
+      "uninstall_args": [
+        "\"C:\\Program Files\\7-Zip\\Uninstall.exe\" /S"
+      ],
+      "description": "7-Zip File Archiver",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
+      "name": "WinRAR",
+      "version": "7.01",
+      "nas_path": "winrar-x64-580.exe",
+      "download_url": "https://www.rarlab.com/rar/winrar-x64-701.exe",
+      "install_args": [
+        "/S"
+      ],
+      "uninstall_args": [
+        "\"C:\\Program Files\\WinRAR\\uninstall.exe\" /S"
+      ],
+      "description": "WinRAR Compression Tool",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
+      "name": "Notepad++",
+      "version": "8.8.5",
+      "nas_path": "npp.8.8.5.Installer.x64.exe",
+      "download_url": "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.8.5/npp.8.8.5.Installer.x64.exe",
+      "install_args": [
+        "/S"
+      ],
+      "uninstall_args": [
+        "\"C:\\Program Files\\Notepad++\\uninstall.exe\" /S"
+      ],
+      "description": "Notepad++ Code Editor",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
+      "name": "VS Code",
+      "version": "1.102.0",
+      "nas_path": "VSCodeUserSetup-x64-1.102.0.exe",
+      "download_url": "https://update.code.visualstudio.com/latest/win32-x64-user/stable",
+      "install_args": [
+        "/verysilent",
+        "/mergetasks=!runcode"
+      ],
+      "uninstall_args": [
+        "\"%LocalAppData%\\Programs\\Microsoft VS Code\\unins000.exe\" /verysilent"
+      ],
+      "description": "Visual Studio Code Editor",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
+      "name": "VLC Media",
+      "version": "3.0.17",
+      "nas_path": "vlc-3.0.17.4-win64.exe",
+      "download_url": "https://get.videolan.org/vlc/3.0.21/win64/vlc-3.0.21-win64.exe",
+      "install_args": [
+        "/S"
+      ],
+      "uninstall_args": [
+        "\"C:\\Program Files\\VideoLAN\\VLC\\uninstall.exe\""
+      ],
+      "interactive": true,
+      "description": "VLC Media Player",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
+      "name": "Java JDK",
+      "version": "23.0.1",
+      "nas_path": "jdk-23_windows-x64_bin.exe",
+      "download_url": "https://download.oracle.com/java/23/latest/jdk-23_windows-x64_bin.exe",
+      "install_args": [],
+      "uninstall_args": [
+        "msiexec /x {3A5D92C8-9C7B-59FB-A6FF-CE3A05C70328} /qn"
+      ],
+      "interactive": true,
+      "description": "Java Development Kit 23",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
+      "name": "Docker Desktop",
+      "version": "Latest",
+      "nas_path": "Docker Desktop Installer.exe",
+      "download_url": "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe",
+      "install_args": [
+        "install",
+        "--quiet"
+      ],
+      "uninstall_args": [
+        "\"C:\\Program Files\\Docker\\Docker\\Docker Desktop Installer.exe\" uninstall --quiet"
+      ],
+      "description": "Docker Desktop for Windows",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "ASP.NET Runtime",
+      "version": "5.0.17",
+      "nas_path": "aspnetcore-runtime-5.0.17-win-x64.exe",
+      "download_url": "https://download.visualstudio.microsoft.com/download/pr/8e9c6e3b-b6d8-4f1e-9f37-1c6d8d8d8d8d/aspnetcore-runtime-5.0.17-win-x64.exe",
+      "install_args": [
+        "/quiet",
+        "/norestart"
+      ],
+      "uninstall_args": [
+        "/uninstall",
+        "/quiet"
+      ],
+      "description": "ASP.NET Core 5.0 Runtime",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "Dotnet Hosting",
+      "version": "5.0.17",
+      "nas_path": "dotnet-hosting-5.0.17-win.exe",
+      "download_url": "",
+      "install_args": [
+        "/quiet"
+      ],
+      "uninstall_args": [
+        "/uninstall",
+        "/quiet"
+      ],
+      "description": "Dotnet Hosting Bundle 5.0",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "Dotnet Hosting",
+      "version": "3.1.1",
+      "nas_path": "dotnet-hosting-3.1.1-win.exe",
+      "download_url": "",
+      "install_args": [
+        "/quiet"
+      ],
+      "uninstall_args": [
+        "/uninstall",
+        "/quiet"
+      ],
+      "description": "Dotnet Hosting Bundle 3.1",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "Dotnet SDK",
+      "version": "5.0.203",
+      "nas_path": "dotnet-sdk-5.0.203-win-x64.exe",
+      "download_url": "",
+      "install_args": [
+        "/quiet"
+      ],
+      "uninstall_args": [
+        "/uninstall",
+        "/quiet"
+      ],
+      "description": "Dotnet SDK 5.0",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "Git",
+      "version": "2.44.0",
+      "nas_path": "Git-2.44.0-64-bit.exe",
+      "download_url": "https://github.com/git-for-windows/git/releases/download/v2.44.0.windows.1/Git-2.44.0-64-bit.exe",
+      "install_args": [
+        "/VERYSILENT",
+        "/NORESTART"
+      ],
+      "uninstall_args": [
+        "\"C:\\Program Files\\Git\\unins000.exe\" /VERYSILENT"
+      ],
+      "description": "Git Version Control",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "MongoDB",
+      "version": "7.0.4",
+      "nas_path": "mongodb-windows-x86_64-7.0.4-signed.msi",
+      "download_url": "",
+      "install_args": [
+        "/quiet",
+        "ADDLOCAL=Server,Client,MonitoringTools,ImportExportTools,MiscellaneousTools"
+      ],
+      "uninstall_args": [
+        "/qn"
+      ],
+      "description": "MongoDB NoSQL Database",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "MySQL Installer",
+      "version": "8.0.35",
+      "nas_path": "mysql-installer-community-8.0.35.0.msi",
+      "download_url": "",
+      "install_args": [
+        "/quiet"
+      ],
+      "uninstall_args": [
+        "/qn"
+      ],
+      "description": "MySQL Database Installer",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "Postman",
+      "version": "9.8.3",
+      "nas_path": "Postman-win64-9.8.3-Setup.exe",
+      "download_url": "",
+      "install_args": [
+        "/S"
+      ],
+      "uninstall_args": [
+        "\"%LocalAppData%\\Postman\\Update.exe\" --uninstall -s"
+      ],
+      "description": "Postman API Platform",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "SQLyog",
+      "version": "13.1.1",
+      "nas_path": "SQLyog-v13.1.1.x64.exe",
+      "download_url": "",
+      "install_args": [
+        "/S"
+      ],
+      "uninstall_args": [
+        "\"C:\\Program Files\\SQLyog\\uninstall.exe\" /S"
+      ],
+      "description": "SQLyog GUI for MySQL",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "SSMS",
+      "version": "20.0",
+      "nas_path": "SSMS-Setup-ENU 2024 20.0.exe",
+      "download_url": "",
+      "install_args": [
+        "/passive",
+        "/norestart"
+      ],
+      "uninstall_args": [
+        "/uninstall",
+        "/passive"
+      ],
+      "description": "SQL Server Management Studio",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "Visual Studio",
+      "version": "Enterprise",
+      "nas_path": "Visual Studio Enterprise.exe",
+      "download_url": "",
+      "install_args": [
+        "--quiet",
+        "--wait",
+        "--norestart"
+      ],
+      "uninstall_args": [
+        "--uninstall",
+        "--quiet"
+      ],
+      "interactive": true,
+      "description": "Visual Studio Enterprise Edition",
+      "category": "Software install",
+      "sub_category": "Q2C"
+    },
+    {
+      "name": "TightVNC Config",
+      "version": "1.0.0",
+      "nas_path": "vnc.ps1",
+      "is_embedded": true,
+      "download_url": "",
+      "install_args": [],
+      "uninstall_args": [],
+      "description": "Auto-config VNC (Admin/Viewer pass & IP filtering).",
+      "category": "Software config",
+      "sub_category": "Automation",
+      "interactive": true
+    },
+    {
+      "name": "RabbitMQ Server",
+      "version": "3.11.3",
+      "nas_path": "setup.ps1",
+      "is_embedded": true,
+      "download_url": "",
+      "install_args": [
+        "-Action",
+        "Install-RabbitMQ"
+      ],
+      "uninstall_args": [
+        "-Action",
+        "Uninstall-RabbitMQ"
+      ],
+      "test_args": [
+        "-Action",
+        "Get-RabbitMQStatus"
+      ],
+      "description": "RabbitMQ Messaging Broker & Erlang OTP (Embedded).",
+      "category": "Software install",
+      "sub_category": "Middleware",
+      "interactive": true
+    },
+    {
+      "name": "ElasticSearch",
+      "version": "8.11.1",
+      "nas_path": "setup.ps1",
+      "is_embedded": true,
+      "download_url": "",
+      "install_args": [
+        "-Action",
+        "Install-ElasticSearch"
+      ],
+      "uninstall_args": [
+        "-Action",
+        "Uninstall-ElasticSearch"
+      ],
+      "test_args": [
+        "-Action",
+        "Get-ElasticSearchStatus"
+      ],
+      "description": "ElasticSearch Vector Database (Embedded).",
+      "category": "Software install",
+      "sub_category": "Middleware",
+      "interactive": true
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Triveni-Control-Center",
+  "outputfilename": "Triveni-Control-Center",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Priyanshu8494",
+    "email": "priyanshukumar.8394pk@gmail.com"
+  }
+}
