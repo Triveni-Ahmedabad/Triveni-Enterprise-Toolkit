@@ -2,6 +2,19 @@
 
 Premium SysAdmin tool for automated software installation, NAS management, and system optimization.
 
+## 📋 Prerequisites (Environment Setup)
+
+If you are setting up a new PC, run these commands in **Admin CMD/PowerShell** to install all required tools:
+
+```cmd
+:: Install Node.js, Go, and Git
+winget install OpenJS.NodeJS GoLang.Go Git.Git --silent
+
+:: Install Wails CLI (After Go is installed)
+go install github.com/wailsapp/wails/v2/cmd/wails@latest
+```
+
+
 ## 🚀 One-Click Automated Build (Fastest)
 
 To build the project on any PC with Go, Node.js, and Git installed, simply run this command in **Command Prompt (CMD)**:
