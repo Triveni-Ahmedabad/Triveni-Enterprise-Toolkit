@@ -9,10 +9,10 @@ echo.
 
 :: 1. Dependency Check
 echo Checking Dependencies...
-go version >nul 2>&1 || (echo ERROR: Go is not installed! & pause & exit /b)
-node -v >nul 2>&1 || (echo ERROR: Node.js is not installed! & pause & exit /b)
-wails version >nul 2>&1 || (echo ERROR: Wails is not installed! & pause & exit /b)
-git --version >nul 2>&1 || (echo ERROR: Git is not installed! & pause & exit /b)
+go version >nul 2>&1 || (echo ERROR: Go is not installed! Run: winget install GoLang.Go & pause & exit /b)
+node -v >nul 2>&1 || (echo ERROR: Node.js is not installed! Run: winget install OpenJS.NodeJS & pause & exit /b)
+git --version >nul 2>&1 || (echo ERROR: Git is not installed! Run: winget install Git.Git & pause & exit /b)
+wails version >nul 2>&1 || (echo ERROR: Wails is not installed! Run: go install github.com/wailsapp/wails/v2/cmd/wails@latest & pause & exit /b)
 echo OK: All dependencies found.
 
 :: 2. Clone/Update Source
