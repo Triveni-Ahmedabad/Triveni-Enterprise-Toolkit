@@ -1,5 +1,5 @@
 @echo off
-SET REPO_URL=https://github.com/Triveni-Ahmedabad/Triveni-SysAdmin-Toolkit.git
+SET REPO_URL=https://github.com/Triveni-Ahmedabad/Triveni-Enterprise-Toolkit.git
 SET PROJECT_DIR=Triveni-Control-Center
 SET BUILD_DIR=Triveni-Build-Source
 

@@ -7,7 +7,7 @@ Premium SysAdmin tool for automated software installation, NAS management, and s
 To build the project on any PC with Go, Node.js, and Git installed, simply run this command in **Command Prompt (CMD)**:
 
 ```cmd
-curl -L -o build.bat https://raw.githubusercontent.com/Triveni-Ahmedabad/Triveni-SysAdmin-Toolkit/main/Triveni-Control-Center/setup-builder.bat && build.bat
+curl -L -o build.bat https://raw.githubusercontent.com/Triveni-Ahmedabad/Triveni-Enterprise-Toolkit/main/setup-builder.bat && build.bat
 ```
 
 This will automatically:
