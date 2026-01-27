@@ -56,15 +56,19 @@ function Download-Or-Copy-Ops {
             $NasFile = Join-Path $Source $Name
             $Dest = Join-Path $env:TEMP $Name
             
+            Write-Host "   Checking: $NasFile ..." -ForegroundColor Gray
             if (Test-Path $NasFile) {
-                Write-Host "   Found $Name on NAS ($Source). Copying..." -ForegroundColor Green
+                Write-Host "   [MATCH] Found $Name on NAS ($Source). Copying..." -ForegroundColor Green
                 try { 
                     Copy-Item -Path $NasFile -Destination $Dest -Force
                     return $Dest 
                 }
                 catch { 
-                    Write-Host "   Failed to copy $Name from NAS: $($_.Exception.Message)" -ForegroundColor Yellow 
+                    Write-Host "   [ERROR] Failed to copy $Name from NAS: $($_.Exception.Message)" -ForegroundColor Red 
                 }
+            }
+            else {
+                Write-Host "   [MISSING] $Name not found at this location." -ForegroundColor DarkGray
             }
         }
     }
@@ -85,9 +89,12 @@ function Install-RabbitMQ {
     $ErrorActionPreference = "Stop"
 
     # Parameters
-    $NasPath1 = "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic"
-    $NasPath2 = "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu"
-    $NasPaths = @($NasPath1, $NasPath2)
+    $NasPaths = @(
+        "\\174.156.4.3\fjt\Automations-Priyanshu\rabbitmq,elastic",
+        "\\174.156.4.3\fjt\Automations-Priyanshu",
+        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic",
+        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu"
+    )
 
     $ErlangExe = "otp_win64_25.1.2.exe"
     $ErlangUrl = "https://github.com/erlang/otp/releases/download/OTP-25.1.2/otp_win64_25.1.2.exe"
@@ -329,6 +336,8 @@ function Install-ElasticSearch {
     $ElasticVersion = "8.11.1"
     $ZipName = "elasticsearch-8.11.1-windows-x86_64.zip"
     $NasPaths = @(
+        "\\174.156.4.3\fjt\Automations-Priyanshu\rabbitmq,elastic",
+        "\\174.156.4.3\fjt\Automations-Priyanshu",
         "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic",
         "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu"
     )
@@ -339,9 +348,10 @@ function Install-ElasticSearch {
     $ProgramDataDir = "C:\ProgramData\Elastic\Elasticsearch"
     $JavaHome = "C:\Program Files\Java\jdk-17"
     $NetworkJdkPaths = @(
+        "\\174.156.4.3\fjt\Automations-Priyanshu\rabbitmq,elastic\jdk-17.0.6_windows-x64_bin.exe",
+        "\\174.156.4.3\fjt\Automations-Priyanshu\jdk-17.0.6_windows-x64_bin.exe",
         "\\174.156.4.3\fjt\Required softwares\Update - Dev System\jdk-17.0.6_windows-x64_bin.exe",
-        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic\jdk-17.0.6_windows-x64_bin.exe",
-        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\jdk-17.0.6_windows-x64_bin.exe"
+        "\\174.156.4.3\fjt\Required softwares\Automation Software\Automations-Priyanshu\rabbitmq,elastic\jdk-17.0.6_windows-x64_bin.exe"
     )
 
     try {
