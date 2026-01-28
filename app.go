@@ -15,6 +15,7 @@ import (
 	"syscall"
 
 	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
+	"golang.org/x/sys/windows"
 )
 
 //go:embed scripts/*
@@ -28,7 +29,7 @@ type App struct {
 
 func NewApp() *App {
 	return &App{
-		Version: "1.18.0",
+		Version: "1.19.0",
 	}
 }
 
@@ -1092,11 +1093,6 @@ func downloadFile(a *App, url, filepath string) error {
 	return nil
 }
 
-func isAdmin() bool {
-	_, err := os.Open("\\\\.\\PHYSICALDRIVE0")
-	return err == nil
-}
-
 func runInstaller(path string, args []string, interactive bool) error {
 	if interactive {
 		// For interactive mode, we rely on PowerShell's Start-Process to create a visible window
@@ -1167,4 +1163,136 @@ func extractEmbeddedScript(scriptName string) string {
 	}
 
 	return destPath
+}
+
+// isAdmin checks if the app is running with administrative privileges
+func isAdmin() bool {
+	var sid *windows.SID
+	err := windows.AllocateAndInitializeSid(
+		&windows.SECURITY_NT_AUTHORITY,
+		2,
+		windows.SECURITY_BUILTIN_DOMAIN_RID,
+		windows.DOMAIN_ALIAS_RID_ADMINS,
+		0, 0, 0, 0, 0, 0,
+		&sid)
+	if err != nil {
+		return false
+	}
+	defer windows.FreeSid(sid)
+
+	token := windows.Token(0)
+	member, err := token.IsMember(sid)
+	if err != nil {
+		return false
+	}
+	return member
+}
+
+// --- v1.19.0 New Features ---
+
+func (a *App) OptimizeSystem(action string) string {
+	if !isAdmin() {
+		return "⚠️ Error: Administrative privileges required for optimizations."
+	}
+	scriptPath := extractEmbeddedScript("optimizer.ps1")
+	if scriptPath == "" {
+		return "❌ Error: Failed to extract optimizer script."
+	}
+
+	// Interactive vs Background depends on the action
+	interactive := false
+	if action == "TestRAM" {
+		interactive = true
+	}
+
+	err := runInstaller(scriptPath, []string{"-Action", action}, interactive)
+	if err != nil {
+		return "❌ Error: Optimization failed - " + err.Error()
+	}
+	return "✅ Success: Optimization task '" + action + "' triggered."
+}
+
+func (a *App) SetUSBBlock(block bool) string {
+	if !isAdmin() {
+		return "⚠️ Error: Administrative privileges required."
+	}
+	value := "3" // Default (Enabled)
+	if block {
+		value = "4" // Disabled
+	}
+	// reg command is standard. We use hide window.
+	cmd := exec.Command("reg", "add", "HKLM\\SYSTEM\\CurrentControlSet\\Services\\USBSTOR", "/v", "Start", "/t", "REG_DWORD", "/d", value, "/f")
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	if err := cmd.Run(); err != nil {
+		return "❌ Error: Failed to update USB policy: " + err.Error()
+	}
+
+	status := "ALLOWED"
+	if block {
+		status = "BLOCKED"
+	}
+	return "✅ Success: USB Storage is now " + status
+}
+
+func (a *App) SetRDPBlock(block bool) string {
+	if !isAdmin() {
+		return "⚠️ Error: Administrative privileges required."
+	}
+	denyValue := "0" // Allow
+	if block {
+		denyValue = "1" // Deny
+	}
+
+	// Registry Change
+	regCmd := exec.Command("reg", "add", "HKLM\\System\\CurrentControlSet\\Control\\Terminal Server", "/v", "fDenyTSConnections", "/t", "REG_DWORD", "/d", denyValue, "/f")
+	regCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	regCmd.Run()
+
+	// Firewall Rules (Using PowerShell)
+	var fwCmd string
+	if block {
+		fwCmd = "Disable-NetFirewallRule -DisplayGroup 'Remote Desktop*'"
+	} else {
+		fwCmd = "Enable-NetFirewallRule -DisplayGroup 'Remote Desktop*'"
+	}
+	exec.Command("powershell", "-Command", fwCmd).Run()
+
+	status := "ENABLED"
+	if block {
+		status = "DISABLED"
+	}
+	return "✅ Success: RDP is now " + status
+}
+
+func (a *App) SetDomainWhitelist(domains string) string {
+	if !isAdmin() {
+		return "⚠️ Error: Administrative privileges required."
+	}
+
+	// Handle empty string as disable
+	if domains == "" || domains == "*" {
+		exec.Command("reg", "delete", "HKLM\\SOFTWARE\\Policies\\Google\\Chrome\\URLAllowlist", "/f").Run()
+		exec.Command("reg", "delete", "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge\\URLAllowlist", "/f").Run()
+		exec.Command("reg", "delete", "HKLM\\SOFTWARE\\Policies\\Google\\Chrome", "/v", "URLBlocklist", "/f").Run()
+		exec.Command("reg", "delete", "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge", "/v", "URLBlocklist", "/f").Run()
+		return "✅ Success: Domain filtering disabled (All domains allowed)."
+	}
+
+	domainList := strings.Split(domains, ",")
+
+	// Chrome Policies
+	exec.Command("reg", "add", "HKLM\\SOFTWARE\\Policies\\Google\\Chrome", "/v", "URLBlocklist", "/t", "REG_MULTI_SZ", "/d", "*", "/f").Run()
+	for i, d := range domainList {
+		valName := fmt.Sprintf("%d", i+1)
+		exec.Command("reg", "add", "HKLM\\SOFTWARE\\Policies\\Google\\Chrome\\URLAllowlist", "/v", valName, "/t", "REG_STRING", "/d", strings.TrimSpace(d), "/f").Run()
+	}
+
+	// Edge Policies
+	exec.Command("reg", "add", "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge", "/v", "URLBlocklist", "/t", "REG_MULTI_SZ", "/d", "*", "/f").Run()
+	for i, d := range domainList {
+		valName := fmt.Sprintf("%d", i+1)
+		exec.Command("reg", "add", "HKLM\\SOFTWARE\\Policies\\Microsoft\\Edge\\URLAllowlist", "/v", valName, "/t", "REG_STRING", "/d", strings.TrimSpace(d), "/f").Run()
+	}
+
+	return "✅ Success: Domain Whitelist Applied (" + domains + ")"
 }

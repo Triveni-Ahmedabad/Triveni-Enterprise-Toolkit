@@ -50,6 +50,10 @@ export function InstallSoftware(arg1) {
   return window['go']['main']['App']['InstallSoftware'](arg1);
 }
 
+export function OptimizeSystem(arg1) {
+  return window['go']['main']['App']['OptimizeSystem'](arg1);
+}
+
 export function RenamePC(arg1) {
   return window['go']['main']['App']['RenamePC'](arg1);
 }
@@ -58,12 +62,24 @@ export function SetBrandedWallpaper() {
   return window['go']['main']['App']['SetBrandedWallpaper']();
 }
 
+export function SetDomainWhitelist(arg1) {
+  return window['go']['main']['App']['SetDomainWhitelist'](arg1);
+}
+
+export function SetRDPBlock(arg1) {
+  return window['go']['main']['App']['SetRDPBlock'](arg1);
+}
+
 export function SetSleepMode(arg1) {
   return window['go']['main']['App']['SetSleepMode'](arg1);
 }
 
 export function SetStaticIP(arg1, arg2, arg3, arg4) {
   return window['go']['main']['App']['SetStaticIP'](arg1, arg2, arg3, arg4);
+}
+
+export function SetUSBBlock(arg1) {
+  return window['go']['main']['App']['SetUSBBlock'](arg1);
 }
 
 export function SetWallpaper(arg1) {

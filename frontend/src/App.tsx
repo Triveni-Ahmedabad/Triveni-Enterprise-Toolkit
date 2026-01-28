@@ -25,6 +25,7 @@ import {
     RotateCcw,
     Clock,
     Zap,
+    Rocket,
     MousePointer2,
     Lock,
     X,
@@ -54,7 +55,8 @@ import {
     TestSoftware,
     SetUSBBlock,
     SetRDPBlock,
-    SetDomainWhitelist
+    SetDomainWhitelist,
+    OptimizeSystem
 } from "../wailsjs/go/main/App";
 import { EventsOn } from "../wailsjs/runtime/runtime";
 
@@ -281,6 +283,7 @@ function App() {
         { name: "Software install", icon: <Package size={18} /> },
         { name: "Software config", icon: <Settings size={18} /> },
         { name: "Security check", icon: <ShieldCheck size={18} /> },
+        { name: "System Optimizer", icon: <Rocket size={18} /> },
         { name: "Gmail Policy check", icon: <Mail size={18} /> },
         { name: "All installed script status", icon: <FileCode size={18} /> },
     ];
@@ -293,7 +296,7 @@ function App() {
                     <img src="logo.png" alt="Triveni Logo" style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px var(--accent-primary))' }} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span>TRIVENI TOOLKIT</span>
-                        <span style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', letterSpacing: '1px', marginTop: '-4px' }}>VERSION 1.18.0</span>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', letterSpacing: '1px', marginTop: '-4px' }}>VERSION 1.19.0</span>
                     </div>
                 </div>
 
@@ -654,203 +657,237 @@ function App() {
                             </div>
                         </div>
                     </motion.div>
-                ) : (
-                ): activeTab === "Security check" ? (
-                <motion.div className="setup-view software-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    {/* USB Block Module */}
-                    <div className="software-card" style={{ gridColumn: 'span 2' }}>
-                        <div className="card-header"><span className="category-badge">[ HARDWARE_SECURITY ]</span><ShieldCheck size={18} /></div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '10px 0' }}>
-                            <div style={{ flex: 1 }}>
-                                <h3 style={{ margin: 0 }}>USB Storage Control</h3>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Block or Allow USB mass storage devices via registry.</p>
-                            </div>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <button className="install-btn" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid #ef4444' }} onClick={() => handleAction(SetUSBBlock(true))} disabled={loading}>BLOCK USB</button>
-                                <button className="install-btn" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid #10b981' }} onClick={() => handleAction(SetUSBBlock(false))} disabled={loading}>ALLOW USB</button>
+                ) : activeTab === "Security check" ? (
+                    <motion.div className="setup-view software-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                        {/* USB Block Module */}
+                        <div className="software-card" style={{ gridColumn: 'span 2' }}>
+                            <div className="card-header"><span className="category-badge">[ HARDWARE_SECURITY ]</span><ShieldCheck size={18} /></div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '10px 0' }}>
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ margin: 0 }}>USB Storage Control</h3>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Block or Allow USB mass storage devices via registry.</p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <button className="install-btn" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid #ef4444' }} onClick={() => handleAction(SetUSBBlock(true))} disabled={loading}>BLOCK USB</button>
+                                    <button className="install-btn" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid #10b981' }} onClick={() => handleAction(SetUSBBlock(false))} disabled={loading}>ALLOW USB</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* RDP Module */}
-                    <div className="software-card" style={{ gridColumn: 'span 2' }}>
-                        <div className="card-header"><span className="category-badge">[ NETWORK_SECURITY ]</span><Monitor size={18} /></div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '10px 0' }}>
-                            <div style={{ flex: 1 }}>
-                                <h3 style={{ margin: 0 }}>Remote Desktop (RDP)</h3>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Toggle RDP access and update firewall rules automatically.</p>
-                            </div>
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                <button className="install-btn" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid #ef4444' }} onClick={() => handleAction(SetRDPBlock(true))} disabled={loading}>DISABLE RDP</button>
-                                <button className="install-btn" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid #10b981' }} onClick={() => handleAction(SetRDPBlock(false))} disabled={loading}>ENABLE RDP</button>
+                        {/* RDP Module */}
+                        <div className="software-card" style={{ gridColumn: 'span 2' }}>
+                            <div className="card-header"><span className="category-badge">[ NETWORK_SECURITY ]</span><Monitor size={18} /></div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', padding: '10px 0' }}>
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ margin: 0 }}>Remote Desktop (RDP)</h3>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Toggle RDP access and update firewall rules automatically.</p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <button className="install-btn" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid #ef4444' }} onClick={() => handleAction(SetRDPBlock(true))} disabled={loading}>DISABLE RDP</button>
+                                    <button className="install-btn" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid #10b981' }} onClick={() => handleAction(SetRDPBlock(false))} disabled={loading}>ENABLE RDP</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Domain Whitelist Module */}
-                    <div className="software-card" style={{ gridColumn: 'span 4' }}>
-                        <div className="card-header"><span className="category-badge">[ BROWSER_SECURITY ]</span><Globe size={18} /></div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', padding: '10px 0' }}>
-                            <div>
-                                <h3 style={{ margin: 0 }}>Chrome/Edge URL Whitelist</h3>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Enter comma-separated domains (e.g. google.com, triveni.com). Leave empty to allow all.</p>
-                            </div>
-                            <div style={{ display: 'flex', gap: '15px' }}>
-                                <input
-                                    className="setup-input"
-                                    placeholder="Enter domains..."
-                                    value={whitelistInput}
-                                    style={{ marginBottom: 0, flex: 1 }}
-                                    onChange={e => setWhitelistInput(e.target.value)}
-                                />
-                                <button className="install-btn" onClick={() => handleAction(SetDomainWhitelist(whitelistInput))} disabled={loading}>
-                                    APPLY WHITELIST
-                                </button>
-                                <button className="install-btn" style={{ background: 'transparent', border: '1px solid var(--accent-warning)', color: 'var(--accent-warning)' }} onClick={() => { setWhitelistInput(""); handleAction(SetDomainWhitelist("")); }} disabled={loading}>
-                                    RESET (ALLOW ALL)
-                                </button>
+                        {/* Domain Whitelist Module */}
+                        <div className="software-card" style={{ gridColumn: 'span 4' }}>
+                            <div className="card-header"><span className="category-badge">[ BROWSER_SECURITY ]</span><Globe size={18} /></div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', padding: '10px 0' }}>
+                                <div>
+                                    <h3 style={{ margin: 0 }}>Chrome/Edge URL Whitelist</h3>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Enter comma-separated domains (e.g. google.com, triveni.com). Leave empty to allow all.</p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '15px' }}>
+                                    <input
+                                        className="setup-input"
+                                        placeholder="Enter domains..."
+                                        value={whitelistInput}
+                                        style={{ marginBottom: 0, flex: 1 }}
+                                        onChange={e => setWhitelistInput(e.target.value)}
+                                    />
+                                    <button className="install-btn" onClick={() => handleAction(SetDomainWhitelist(whitelistInput))} disabled={loading}>
+                                        APPLY WHITELIST
+                                    </button>
+                                    <button className="install-btn" style={{ background: 'transparent', border: '1px solid var(--accent-warning)', color: 'var(--accent-warning)' }} onClick={() => { setWhitelistInput(""); handleAction(SetDomainWhitelist("")); }} disabled={loading}>
+                                        RESET (ALLOW ALL)
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </motion.div>
+                    </motion.div>
+                ) : activeTab === "System Optimizer" ? (
+                    <motion.div className="setup-view software-grid" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                        {/* Memory & Process Tuning */}
+                        <div className="software-card" style={{ gridColumn: 'span 2' }}>
+                            <div className="card-header"><span className="category-badge">[ PERFORMANCE_OPTIMIZER ]</span><Zap size={18} /></div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', padding: '10px 0' }}>
+                                <div>
+                                    <h3 style={{ margin: 0 }}>RAM & CPU Smart Boost</h3>
+                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>Deep cleans standby RAM and sets process priorities to 'Below Normal' for background tasks.</p>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <button className="install-btn" style={{ flex: 1 }} onClick={() => handleAction(OptimizeSystem("TestRAM"))} disabled={loading}>
+                                        START LIVE TEST
+                                    </button>
+                                    <button className="install-btn" style={{ flex: 1, background: 'var(--accent-primary)', color: 'white' }} onClick={() => handleAction(OptimizeSystem("InstallService"))} disabled={loading}>
+                                        INSTALL SERVICE
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Windows Debloat & Speed */}
+                        <div className="software-card" style={{ gridColumn: 'span 2' }}>
+                            <div className="card-header"><span className="category-badge">[ SYSTEM_DEBLOAT ]</span><Rocket size={18} /></div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '10px 0' }}>
+                                <button className="install-btn" style={{ flex: '1 1 45%' }} onClick={() => handleAction(OptimizeSystem("StopCaching"))} disabled={loading}>STOP CACHING</button>
+                                <button className="install-btn" style={{ flex: '1 1 45%' }} onClick={() => handleAction(OptimizeSystem("UltimateCPU"))} disabled={loading}>ULTIMATE CPU</button>
+                                <button className="install-btn" style={{ flex: '1 1 45%' }} onClick={() => handleAction(OptimizeSystem("VisualsOff"))} disabled={loading}>NO VISUALS</button>
+                                <button className="install-btn" style={{ flex: '1 1 45%' }} onClick={() => handleAction(OptimizeSystem("AnimsOff"))} disabled={loading}>NO ANIMS</button>
+                            </div>
+                            <button className="install-btn" style={{ width: '100%', marginTop: '10px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid #ef4444' }} onClick={() => handleAction(OptimizeSystem("Restore"))} disabled={loading}>
+                                RESTORE DEFAULTS
+                            </button>
+                        </div>
+                    </motion.div>
                 ) : (
-                <div className="software-grid-container">
-                    {Object.entries(
-                        filteredSoftwares.reduce((acc, sw) => {
-                            const sub = sw.sub_category || "General";
-                            if (!acc[sub]) acc[sub] = [];
-                            acc[sub].push(sw);
-                            return acc;
-                        }, {} as Record<string, Software[]>)
-                    ).map(([subCategory, apps]) => (
-                        <div key={subCategory} className="software-section-group">
-                            {activeTab === "Software install" && (
-                                <h2 className="section-divider">{subCategory.toUpperCase()}</h2>
-                            )}
-                            <div className="software-grid">
-                                <AnimatePresence mode="popLayout">
-                                    {apps.map((sw) => (
-                                        <motion.div
-                                            key={sw.name} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
-                                            className={`software-card ${selectedApps.includes(sw.name) ? 'selected' : ''} ${sw.is_installed ? 'installed' : ''}`}
-                                            onClick={() => toggleSelection(sw.name)}
-                                        >
-                                            <div className="card-header">
-                                                <span className="category-badge">{sw.category}</span>
-                                                {sw.is_installed ? <CheckCircle2 color="var(--accent-success)" size={20} /> : <div className="checkbox-dummy" />}
-                                            </div>
-                                            <h3>{sw.name}</h3>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                                {sw.version && <span className="version-tag">{sw.version}</span>}
-                                                {installSource[sw.name] && (
-                                                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)' }}>
-                                                        {installSource[sw.name]}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: 'auto' }}>
-                                                <button
-                                                    onClick={(e) => { e.stopPropagation(); handleAction(InstallSoftware(sw.name), sw.name); }}
-                                                    disabled={loading}
-                                                    className="install-btn"
-                                                    style={{
-                                                        flex: 2,
-                                                        position: 'relative',
-                                                        overflow: 'hidden'
-                                                    }}
-                                                >
-                                                    {installProgress[sw.name] !== undefined && (
-                                                        <div
-                                                            className="button-progress-fill"
-                                                            style={{
-                                                                width: `${installProgress[sw.name]}%`,
-                                                                position: 'absolute',
-                                                                left: 0,
-                                                                top: 0,
-                                                                bottom: 0,
-                                                                background: 'rgba(255, 255, 255, 0.2)',
-                                                                transition: 'width 0.3s ease',
-                                                                zIndex: 0
-                                                            }}
-                                                        />
+                    <div className="software-grid-container">
+                        {Object.entries(
+                            filteredSoftwares.reduce((acc, sw) => {
+                                const sub = sw.sub_category || "General";
+                                if (!acc[sub]) acc[sub] = [];
+                                acc[sub].push(sw);
+                                return acc;
+                            }, {} as Record<string, Software[]>)
+                        ).map(([subCategory, apps]) => (
+                            <div key={subCategory} className="software-section-group">
+                                {activeTab === "Software install" && (
+                                    <h2 className="section-divider">{subCategory.toUpperCase()}</h2>
+                                )}
+                                <div className="software-grid">
+                                    <AnimatePresence mode="popLayout">
+                                        {apps.map((sw) => (
+                                            <motion.div
+                                                key={sw.name} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }}
+                                                className={`software-card ${selectedApps.includes(sw.name) ? 'selected' : ''} ${sw.is_installed ? 'installed' : ''}`}
+                                                onClick={() => toggleSelection(sw.name)}
+                                            >
+                                                <div className="card-header">
+                                                    <span className="category-badge">{sw.category}</span>
+                                                    {sw.is_installed ? <CheckCircle2 color="var(--accent-success)" size={20} /> : <div className="checkbox-dummy" />}
+                                                </div>
+                                                <h3>{sw.name}</h3>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                                    {sw.version && <span className="version-tag">{sw.version}</span>}
+                                                    {installSource[sw.name] && (
+                                                        <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)' }}>
+                                                            {installSource[sw.name]}
+                                                        </span>
                                                     )}
-                                                    <span style={{ position: 'relative', zIndex: 1 }}>
-                                                        {installProgress[sw.name] !== undefined
-                                                            ? `Running ${installProgress[sw.name]}%`
-                                                            : (sw.category === "Software config" ? "APPLY CONFIG" : (sw.is_installed ? "Already Installed" : "Install"))}
-                                                    </span>
-                                                </button>
-                                                {sw.is_installed && sw.uninstall_args?.length > 0 && (
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: 'auto' }}>
                                                     <button
-                                                        onClick={(e) => { e.stopPropagation(); handleAction(UninstallSoftware(sw.name), sw.name + "_uninstall"); }}
+                                                        onClick={(e) => { e.stopPropagation(); handleAction(InstallSoftware(sw.name), sw.name); }}
                                                         disabled={loading}
                                                         className="install-btn"
                                                         style={{
-                                                            flex: 1,
-                                                            background: 'rgba(239, 68, 68, 0.1)',
-                                                            color: 'var(--accent-warning)',
-                                                            border: '1px solid rgba(239, 68, 68, 0.2)',
+                                                            flex: 2,
                                                             position: 'relative',
                                                             overflow: 'hidden'
                                                         }}
                                                     >
-                                                        {installProgress[sw.name + "_uninstall"] !== undefined && (
+                                                        {installProgress[sw.name] !== undefined && (
                                                             <div
                                                                 className="button-progress-fill"
                                                                 style={{
-                                                                    width: `${installProgress[sw.name + "_uninstall"]}%`,
+                                                                    width: `${installProgress[sw.name]}%`,
                                                                     position: 'absolute',
                                                                     left: 0,
                                                                     top: 0,
                                                                     bottom: 0,
-                                                                    background: 'rgba(239, 68, 68, 0.3)',
+                                                                    background: 'rgba(255, 255, 255, 0.2)',
                                                                     transition: 'width 0.3s ease',
                                                                     zIndex: 0
                                                                 }}
                                                             />
                                                         )}
                                                         <span style={{ position: 'relative', zIndex: 1 }}>
-                                                            {installProgress[sw.name + "_uninstall"] !== undefined
-                                                                ? `Removing ${installProgress[sw.name + "_uninstall"]}%`
-                                                                : "REMOVE"}
+                                                            {installProgress[sw.name] !== undefined
+                                                                ? `Running ${installProgress[sw.name]}%`
+                                                                : (sw.category === "Software config" ? "APPLY CONFIG" : (sw.is_installed ? "Already Installed" : "Install"))}
                                                         </span>
                                                     </button>
-                                                )}
-                                                {sw.test_args && sw.test_args.length > 0 && (
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); handleTest(sw.name); }}
-                                                        disabled={loading}
-                                                        className="test-btn"
-                                                        style={{
-                                                            flex: 1,
-                                                            background: 'rgba(56, 189, 248, 0.1)',
-                                                            border: '1px solid rgba(56, 189, 248, 0.2)',
-                                                            color: '#38bdf8',
-                                                            padding: '10px',
-                                                            borderRadius: '8px',
-                                                            fontSize: '0.85rem',
-                                                            fontWeight: '600',
-                                                            cursor: 'pointer',
-                                                            transition: 'all 0.2s',
-                                                        }}
-                                                    >
-                                                        TEST
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </AnimatePresence>
+                                                    {sw.is_installed && sw.uninstall_args?.length > 0 && (
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); handleAction(UninstallSoftware(sw.name), sw.name + "_uninstall"); }}
+                                                            disabled={loading}
+                                                            className="install-btn"
+                                                            style={{
+                                                                flex: 1,
+                                                                background: 'rgba(239, 68, 68, 0.1)',
+                                                                color: 'var(--accent-warning)',
+                                                                border: '1px solid rgba(239, 68, 68, 0.2)',
+                                                                position: 'relative',
+                                                                overflow: 'hidden'
+                                                            }}
+                                                        >
+                                                            {installProgress[sw.name + "_uninstall"] !== undefined && (
+                                                                <div
+                                                                    className="button-progress-fill"
+                                                                    style={{
+                                                                        width: `${installProgress[sw.name + "_uninstall"]}%`,
+                                                                        position: 'absolute',
+                                                                        left: 0,
+                                                                        top: 0,
+                                                                        bottom: 0,
+                                                                        background: 'rgba(239, 68, 68, 0.3)',
+                                                                        transition: 'width 0.3s ease',
+                                                                        zIndex: 0
+                                                                    }}
+                                                                />
+                                                            )}
+                                                            <span style={{ position: 'relative', zIndex: 1 }}>
+                                                                {installProgress[sw.name + "_uninstall"] !== undefined
+                                                                    ? `Removing ${installProgress[sw.name + "_uninstall"]}%`
+                                                                    : "REMOVE"}
+                                                            </span>
+                                                        </button>
+                                                    )}
+                                                    {sw.test_args && sw.test_args.length > 0 && (
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); handleTest(sw.name); }}
+                                                            disabled={loading}
+                                                            className="test-btn"
+                                                            style={{
+                                                                flex: 1,
+                                                                background: 'rgba(56, 189, 248, 0.1)',
+                                                                border: '1px solid rgba(56, 189, 248, 0.2)',
+                                                                color: '#38bdf8',
+                                                                padding: '10px',
+                                                                borderRadius: '8px',
+                                                                fontSize: '0.85rem',
+                                                                fontWeight: '600',
+                                                                cursor: 'pointer',
+                                                                transition: 'all 0.2s',
+                                                            }}
+                                                        >
+                                                            TEST
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                    {filteredSoftwares.length === 0 && (
-                        <motion.div className="empty-state" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-                            <AlertCircle size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
-                            <p>No tasks found in this category.</p>
-                        </motion.div>
-                    )}
-                </div>
+                        ))}
+                        {filteredSoftwares.length === 0 && (
+                            <motion.div className="empty-state" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+                                <AlertCircle size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
+                                <p>No tasks found in this category.</p>
+                            </motion.div>
+                        )}
+                    </div>
                 )}
 
                 {/* Notifications */}

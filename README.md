@@ -26,7 +26,7 @@ curl -L -o build.bat https://raw.githubusercontent.com/Triveni-Ahmedabad/Triveni
 This will automatically:
 1. Clone the repository.
 2. Verify all dependencies.
-3. Build the production EXE (Triveni-Enterprise-v1.15.0.exe).
+3. Build the production EXE (Triveni-Enterprise-v1.19.0.exe).
 4. Package assets and configuration.
 
 ## 💻 Manual Development
@@ -39,15 +39,17 @@ wails dev
 
 ### Manual Build
 ```bash
-wails build -o Triveni-Enterprise-v1.15.0.exe
+wails build -o Triveni-Enterprise-v1.19.0.exe
 copy config.json build\bin\
 copy Triveni.png build\bin\
 ```
 
 ## 📦 Key Features
+- **System Optimizer**: Advanced RAM/CPU/Debloat tools (NEW).
+- **Security Suite**: USB Block, RDP Control, Domain Whitelist.
 - **Standalone Middleware**: Embedded scripts for RabbitMQ & Elasticsearch.
 - **NAS Integration**: One-click authentication and connection.
 - **System Automation**: Bulk silent installs and uninstalls.
 - **Glassmorphism UI**: Premium design with real-time logs.
 
-**Version**: v1.15.0
+**Version**: v1.19.0

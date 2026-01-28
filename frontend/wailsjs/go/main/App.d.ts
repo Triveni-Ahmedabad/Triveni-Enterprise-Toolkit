@@ -26,13 +26,21 @@ export function InstallSQLyog():Promise<string>;
 
 export function InstallSoftware(arg1:string):Promise<string>;
 
+export function OptimizeSystem(arg1:string):Promise<string>;
+
 export function RenamePC(arg1:string):Promise<string>;
 
 export function SetBrandedWallpaper():Promise<string>;
 
+export function SetDomainWhitelist(arg1:string):Promise<string>;
+
+export function SetRDPBlock(arg1:boolean):Promise<string>;
+
 export function SetSleepMode(arg1:number):Promise<string>;
 
 export function SetStaticIP(arg1:string,arg2:string,arg3:string,arg4:string):Promise<string>;
+
+export function SetUSBBlock(arg1:boolean):Promise<string>;
 
 export function SetWallpaper(arg1:string):Promise<string>;
 
