@@ -13,6 +13,8 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
+
+	wailsRuntime "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 //go:embed scripts/*
@@ -26,7 +28,7 @@ type App struct {
 
 func NewApp() *App {
 	return &App{
-		Version: "1.15.0",
+		Version: "1.18.0",
 	}
 }
 
@@ -306,8 +308,129 @@ func (a *App) GetHardwareInfo() HardwareInfo {
 	return info
 }
 
+// ApplyTightVNCConfig applies security settings to TightVNC natively
+func (a *App) ApplyTightVNCConfig() string {
+	if !isAdmin() {
+		return "⚠️ Error: Administrative privileges required to configure VNC."
+	}
+
+	ipAccess := "192.168.1.1-192.168.1.254:0,174.156.5.1-174.156.5.254:0"
+
+	// Configure Registry to NOT ask for password (No Authentication)
+	commands := [][]string{
+		{"reg", "add", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "UseVncAuthentication", "/t", "REG_DWORD", "/d", "0", "/f"},
+		{"reg", "add", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "UseControlAuthentication", "/t", "REG_DWORD", "/d", "0", "/f"},
+		{"reg", "add", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "AccessControlConfig", "/t", "REG_STRING", "/d", ipAccess, "/f"},
+		{"reg", "add", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "RfbPort", "/t", "REG_DWORD", "/d", "5900", "/f"},
+		{"reg", "add", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "AcceptPointerEvents", "/t", "REG_DWORD", "/d", "1", "/f"},
+		{"reg", "add", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "AcceptKeyboardEvents", "/t", "REG_DWORD", "/d", "1", "/f"},
+		{"reg", "add", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "AllowLoopback", "/t", "REG_DWORD", "/d", "1", "/f"},
+		// Delete existing password keys to ensure no conflicts
+		{"reg", "delete", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "Password", "/f"},
+		{"reg", "delete", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "ControlPassword", "/f"},
+		{"reg", "delete", "HKLM\\SOFTWARE\\TightVNC\\Server", "/v", "PasswordViewOnly", "/f"},
+	}
+
+	for _, cmdArgs := range commands {
+		cmd := exec.Command(cmdArgs[0], cmdArgs[1:]...)
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		cmd.Run()
+	}
+
+	// Restart service more robustly
+	exec.Command("net", "stop", "tvnserver").Run()
+	// Wait a bit for it to stop
+	exec.Command("powershell", "-Command", "Start-Sleep -Seconds 2").Run()
+	err := exec.Command("net", "start", "tvnserver").Run()
+
+	if err != nil {
+		return "✅ Config Applied (VNC Service restart skipped)."
+	}
+
+	return "✅ Success: TightVNC Configured (Authentication Disabled)."
+}
+
+// InstallSQLyog handles SQLyog specifically (Q2C requirement)
+func (a *App) InstallSQLyog() string {
+	config, _ := loadConfig("config.json")
+	target := "SQLyog-v13.1.1.x64.exe"
+
+	// Quick Search Priority
+	nasPaths := []string{
+		"\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\Q2C\\" + target,
+		"\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\Basic sw\\" + target,
+		filepath.Join(config.NasBasePath, target),
+	}
+
+	tempPath := filepath.Join(TempDir, target)
+
+	// 1. Try NAS
+	for _, p := range nasPaths {
+		if fileExists(p) {
+			copyFile(a, p, tempPath)
+			runInstaller(tempPath, []string{"/S"}, false)
+			return "✅ Success: SQLyog Installed from NAS."
+		}
+	}
+
+	// 2. Try Download
+	url := "https://github.com/webyog/sqlyog-community/releases/download/v13.2.1/SQLyog-13.2.1-0.x64Community.exe"
+	if err := downloadFile(a, url, tempPath); err == nil {
+		runInstaller(tempPath, []string{"/S"}, false)
+		return "✅ Success: SQLyog Installed from Web Download."
+	}
+
+	return "❌ Error: Could not find SQLyog on NAS or Internet."
+}
+
+// InstallDocker handles Docker Desktop specifically (Q2C requirement)
+func (a *App) InstallDocker() string {
+	config, _ := loadConfig("config.json")
+	target := "Docker Desktop Installer.exe"
+
+	// Quick Search Priority
+	nasPaths := []string{
+		"\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\Q2C\\" + target,
+		"\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\Basic sw\\" + target,
+		filepath.Join(config.NasBasePath, target),
+	}
+
+	tempPath := filepath.Join(TempDir, target)
+
+	// 1. Try NAS
+	for _, p := range nasPaths {
+		if fileExists(p) {
+			copyFile(a, p, tempPath)
+			// Run directly (interactive), bypass PowerShell wrapper
+			cmd := exec.Command(tempPath, "install")
+			cmd.Start()
+			return "✅ Success: Docker Installer Started from NAS (Direct)."
+		}
+	}
+
+	// 2. Try Download
+	url := "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
+	if err := downloadFile(a, url, tempPath); err == nil {
+		cmd := exec.Command(tempPath, "install")
+		cmd.Start()
+		return "✅ Success: Docker Installer Started from Web (Direct)."
+	}
+
+	return "❌ Error: Could not find Docker on NAS or Internet."
+}
+
 // InstallSoftware handles the logic for a specific software
 func (a *App) InstallSoftware(name string) string {
+	if name == "TightVNC Config" {
+		return a.ApplyTightVNCConfig()
+	}
+	if name == "SQLyog" {
+		return a.InstallSQLyog()
+	}
+	if name == "Docker Desktop" {
+		return a.InstallDocker()
+	}
+
 	config, err := loadConfig("config.json")
 	if err != nil {
 		return "Error loading config"
@@ -365,7 +488,7 @@ func (a *App) InstallSoftware(name string) string {
 			if checkNasAvailability(root) {
 				fullNasPath := filepath.Join(root, targetSw.NasPath)
 				if fileExists(fullNasPath) {
-					err := copyFile(fullNasPath, destPath)
+					err := copyFile(a, fullNasPath, destPath)
 					if err == nil {
 						installerPath = destPath
 						break
@@ -384,7 +507,7 @@ func (a *App) InstallSoftware(name string) string {
 			if targetSw.DownloadUrl == "" {
 				return "❌ Error: Not found on NAS and no Download URL provided for " + targetSw.Name
 			}
-			err := downloadFile(targetSw.DownloadUrl, destPath)
+			err := downloadFile(a, targetSw.DownloadUrl, destPath)
 			if err != nil {
 				return "Download Failed: " + err.Error()
 			}
@@ -406,6 +529,16 @@ func (a *App) BulkInstall(names []string) []string {
 	var results []string
 	for _, name := range names {
 		res := a.InstallSoftware(name)
+		results = append(results, res)
+	}
+	return results
+}
+
+// BulkUninstall processes multiple softwares removals in one go
+func (a *App) BulkUninstall(names []string) []string {
+	var results []string
+	for _, name := range names {
+		res := a.UninstallSoftware(name)
 		results = append(results, res)
 	}
 	return results
@@ -698,7 +831,7 @@ func (a *App) SetWallpaper(url string) string {
 	dest := filepath.Join(TempDir, "wallpaper.jpg")
 	os.MkdirAll(TempDir, 0755)
 
-	err := downloadFile(url, dest)
+	err := downloadFile(a, url, dest)
 	if err != nil {
 		return "Download Error: " + err.Error()
 	}
@@ -881,34 +1014,82 @@ func fileExists(path string) bool {
 	return err == nil
 }
 
-func copyFile(src, dst string) error {
+func copyFile(a *App, src, dst string) error {
 	in, err := os.Open(src)
 	if err != nil {
 		return err
 	}
 	defer in.Close()
+
+	stat, err := in.Stat()
+	if err != nil {
+		return err
+	}
+	size := stat.Size()
+
 	out, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
 	defer out.Close()
-	_, err = io.Copy(out, in)
-	return err
+
+	// Use a buffer to report progress
+	buf := make([]byte, 32*1024)
+	var total int64
+	for {
+		n, err := in.Read(buf)
+		if n > 0 {
+			out.Write(buf[:n])
+			total += int64(n)
+			if size > 0 {
+				percentage := int(float64(total) / float64(size) * 100)
+				wailsRuntime.EventsEmit(a.ctx, "download-progress", percentage)
+			}
+		}
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
-func downloadFile(url, filepath string) error {
+func downloadFile(a *App, url, filepath string) error {
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
+
+	size := resp.ContentLength
 	out, err := os.Create(filepath)
 	if err != nil {
 		return err
 	}
 	defer out.Close()
-	_, err = io.Copy(out, resp.Body)
-	return err
+
+	buf := make([]byte, 32*1024)
+	var total int64
+	for {
+		n, err := resp.Body.Read(buf)
+		if n > 0 {
+			out.Write(buf[:n])
+			total += int64(n)
+			if size > 0 {
+				percentage := int(float64(total) / float64(size) * 100)
+				wailsRuntime.EventsEmit(a.ctx, "download-progress", percentage)
+			}
+		}
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func isAdmin() bool {

@@ -95,6 +95,38 @@
       "sub_category": "Basic"
     },
     {
+      "name": "Lightshot",
+      "version": "Latest",
+      "nas_path": "lightshot.ps1",
+      "is_embedded": true,
+      "download_url": "",
+      "install_args": [],
+      "uninstall_args": [
+        "wmic product where \"name like 'Lightshot%'\" call uninstall /nointeractive"
+      ],
+      "description": "Silent Screenshot Tool (No browser popup).",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
+      "name": "TightVNC",
+      "version": "2.8.84",
+      "nas_path": "tightvnc-2.8.84-gpl-setup-64bit.msi",
+      "download_url": "https://www.tightvnc.com/download/2.8.84/tightvnc-2.8.84-gpl-setup-64bit.msi",
+      "install_args": [
+        "/quiet",
+        "/norestart",
+        "ADDLOCAL=Server",
+        "SERVER_REGISTER_AS_SERVICE=1"
+      ],
+      "uninstall_args": [
+        "msiexec /x {B3D64B53-6D63-4796-905F-6F1C4E7DE592} /qn"
+      ],
+      "description": "TightVNC Remote Desktop Software.",
+      "category": "Software install",
+      "sub_category": "Basic"
+    },
+    {
       "name": "Java JDK",
       "version": "23.0.1",
       "nas_path": "jdk-23_windows-x64_bin.exe",
@@ -114,12 +146,12 @@
       "nas_path": "Docker Desktop Installer.exe",
       "download_url": "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe",
       "install_args": [
-        "install",
-        "--quiet"
+        "install"
       ],
       "uninstall_args": [
         "\"C:\\Program Files\\Docker\\Docker\\Docker Desktop Installer.exe\" uninstall --quiet"
       ],
+      "interactive": true,
       "description": "Docker Desktop for Windows",
       "category": "Software install",
       "sub_category": "Q2C"
@@ -255,14 +287,14 @@
       "name": "SQLyog",
       "version": "13.1.1",
       "nas_path": "SQLyog-v13.1.1.x64.exe",
-      "download_url": "",
+      "download_url": "https://github.com/webyog/sqlyog-community/releases/download/v13.2.1/SQLyog-13.2.1-0.x64Community.exe",
       "install_args": [
         "/S"
       ],
       "uninstall_args": [
         "\"C:\\Program Files\\SQLyog\\uninstall.exe\" /S"
       ],
-      "description": "SQLyog GUI for MySQL",
+      "description": "SQLyog GUI for MySQL (Native Handler).",
       "category": "Software install",
       "sub_category": "Q2C"
     },
@@ -304,13 +336,13 @@
     },
     {
       "name": "TightVNC Config",
-      "version": "1.0.0",
+      "version": "1.15.2",
       "nas_path": "vnc.ps1",
       "is_embedded": true,
       "download_url": "",
       "install_args": [],
       "uninstall_args": [],
-      "description": "Auto-config VNC (Admin/Viewer pass & IP filtering).",
+      "description": "Apply Security Config (No Password required).",
       "category": "Software config",
       "sub_category": "Automation",
       "interactive": true
@@ -359,6 +391,30 @@
       "description": "ElasticSearch Vector Database (Embedded).",
       "category": "Software install",
       "sub_category": "Middleware",
+      "interactive": true
+    },
+    {
+      "name": "USB Storage Block",
+      "version": "1.0",
+      "description": "Block/Allow all USB storage devices.",
+      "category": "Security check",
+      "sub_category": "Hardware Security",
+      "interactive": true
+    },
+    {
+      "name": "RDP Remote Access",
+      "version": "1.0",
+      "description": "Enable/Disable RDP and Firewall RDP rules.",
+      "category": "Security check",
+      "sub_category": "Network Security",
+      "interactive": true
+    },
+    {
+      "name": "Domain URL Whitelist",
+      "version": "1.0",
+      "description": "Whitelist specific domains in Chrome/Edge.",
+      "category": "Security check",
+      "sub_category": "Browser Security",
       "interactive": true
     }
   ]

@@ -14,7 +14,7 @@ Write-Host ">>> Updating project version to: $NewVersion" -ForegroundColor Cyan
 $AppGoPath = Join-Path $Root "app.go"
 if (Test-Path $AppGoPath) {
     $content = Get-Content $AppGoPath -Raw
-    $newContent = $content -replace 'Version: ".*"', "Version: `"$NewVersion`","
+    $newContent = $content -replace 'Version:\s*".*?"(,|)', "Version: `"$NewVersion`","
     $newContent | Set-Content $AppGoPath
     Write-Host "   [DONE] app.go updated." -ForegroundColor Green
 }
@@ -35,6 +35,17 @@ if (Test-Path $WailsJsonPath) {
     $json | Add-Member -MemberType NoteProperty -Name "version" -Value $NewVersion -Force
     $json | ConvertTo-Json -Depth 10 | Set-Content $WailsJsonPath
     Write-Host "   [DONE] wails.json updated." -ForegroundColor Green
+}
+
+# 4. Update local-build.bat
+$BatPath = Join-Path $Root "local-build.bat"
+if (Test-Path $BatPath) {
+    $content = Get-Content $BatPath -Raw
+    $newContent = $content -replace 'v\d+\.\d+\.\d+', "v$NewVersion"
+    $newContent = $newContent -replace 'v1\.\d+\.\d+', "v$NewVersion"
+    $newContent = $newContent -replace 'Enterprise-v\d+\.\d+\.\d+', "Enterprise-v$NewVersion"
+    $newContent | Set-Content $BatPath
+    Write-Host "   [DONE] local-build.bat updated." -ForegroundColor Green
 }
 
 Write-Host "`n✅ VERSION UPDATE COMPLETE!" -ForegroundColor Yellow

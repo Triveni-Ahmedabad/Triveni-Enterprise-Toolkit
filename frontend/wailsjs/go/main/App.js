@@ -6,8 +6,16 @@ export function AllowPing() {
   return window['go']['main']['App']['AllowPing']();
 }
 
+export function ApplyTightVNCConfig() {
+  return window['go']['main']['App']['ApplyTightVNCConfig']();
+}
+
 export function BulkInstall(arg1) {
   return window['go']['main']['App']['BulkInstall'](arg1);
+}
+
+export function BulkUninstall(arg1) {
+  return window['go']['main']['App']['BulkUninstall'](arg1);
 }
 
 export function ConnectNAS(arg1, arg2) {
@@ -28,6 +36,14 @@ export function GetSoftwareList() {
 
 export function GetSystemStatus() {
   return window['go']['main']['App']['GetSystemStatus']();
+}
+
+export function InstallDocker() {
+  return window['go']['main']['App']['InstallDocker']();
+}
+
+export function InstallSQLyog() {
+  return window['go']['main']['App']['InstallSQLyog']();
 }
 
 export function InstallSoftware(arg1) {

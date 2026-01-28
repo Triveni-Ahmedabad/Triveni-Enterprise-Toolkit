@@ -4,7 +4,11 @@ import {main} from '../models';
 
 export function AllowPing():Promise<string>;
 
+export function ApplyTightVNCConfig():Promise<string>;
+
 export function BulkInstall(arg1:Array<string>):Promise<Array<string>>;
+
+export function BulkUninstall(arg1:Array<string>):Promise<Array<string>>;
 
 export function ConnectNAS(arg1:string,arg2:string):Promise<string>;
 
@@ -15,6 +19,10 @@ export function GetHardwareInfo():Promise<main.HardwareInfo>;
 export function GetSoftwareList():Promise<Array<main.Software>>;
 
 export function GetSystemStatus():Promise<string>;
+
+export function InstallDocker():Promise<string>;
+
+export function InstallSQLyog():Promise<string>;
 
 export function InstallSoftware(arg1:string):Promise<string>;
 
