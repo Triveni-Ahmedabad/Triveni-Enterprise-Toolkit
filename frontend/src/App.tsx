@@ -274,7 +274,7 @@ function App() {
                     <img src="logo.png" alt="Triveni Logo" style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px var(--accent-primary))' }} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span>TRIVENI TOOLKIT</span>
-                        <span style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', letterSpacing: '1px', marginTop: '-4px' }}>VERSION 1.14.2</span>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', letterSpacing: '1px', marginTop: '-4px' }}>VERSION 1.15.0</span>
                     </div>
                 </div>
 
@@ -844,3 +844,4 @@ function App() {
 }
 
 export default App
+

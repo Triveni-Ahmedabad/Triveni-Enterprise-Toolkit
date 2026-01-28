@@ -26,7 +26,7 @@ curl -L -o build.bat https://raw.githubusercontent.com/Triveni-Ahmedabad/Triveni
 This will automatically:
 1. Clone the repository.
 2. Verify all dependencies.
-3. Build the production EXE (Triveni-Enterprise-v1.13.0.exe).
+3. Build the production EXE (Triveni-Enterprise-v1.15.0.exe).
 4. Package assets and configuration.
 
 ## 💻 Manual Development
@@ -39,7 +39,7 @@ wails dev
 
 ### Manual Build
 ```bash
-wails build -o Triveni-Enterprise-v1.13.0.exe
+wails build -o Triveni-Enterprise-v1.15.0.exe
 copy config.json build\bin\
 copy Triveni.png build\bin\
 ```
@@ -50,4 +50,4 @@ copy Triveni.png build\bin\
 - **System Automation**: Bulk silent installs and uninstalls.
 - **Glassmorphism UI**: Premium design with real-time logs.
 
-**Version**: v1.13.0
+**Version**: v1.15.0

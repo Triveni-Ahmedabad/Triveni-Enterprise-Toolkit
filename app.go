@@ -26,7 +26,7 @@ type App struct {
 
 func NewApp() *App {
 	return &App{
-		Version: "1.14.2",
+		Version: "1.15.0",
 	}
 }
 
@@ -83,13 +83,17 @@ func isSoftwareInstalled(name string) bool {
 		"AnyDesk":         {"AnyDesk\\AnyDesk.exe"},
 		"Git":             {"Git\\bin\\git.exe"},
 		"Node.js":         {"nodejs\\node.exe"},
-		"Python 3":        {"Python39\\python.exe", "Python310\\python.exe"},
+		"Python 3":        {"Python39\\python.exe", "Python310\\python.exe", "Python312\\python.exe"},
 		"Docker Desktop":  {"Docker\\Docker\\resources\\bin\\docker.exe"},
-		"MongoDB":         {"MongoDB\\Server\\7.0\\bin\\mongod.exe"},
+		"MongoDB":         {"MongoDB\\Server\\7.0\\bin\\mongod.exe", "MongoDB\\Server\\6.0\\bin\\mongod.exe"},
 		"SQLyog":          {"SQLyog\\SQLyog.exe"},
-		"Postman":         {"Postman\\Postman.exe"},
+		"Postman":         {"Postman\\Postman.exe", "Postman\\app\\Postman.exe"},
 		"RabbitMQ Server": {"RabbitMQ Server\\rabbitmq_server-3.11.3\\sbin\\rabbitmqctl.bat"},
 		"ElasticSearch":   {"Elastic\\Elasticsearch\\8.11.1\\bin\\elasticsearch-service.bat"},
+		"SSMS":            {"Microsoft SQL Server Management Studio 18\\Common7\\IDE\\Ssms.exe", "Microsoft SQL Server Management Studio 19\\Common7\\IDE\\Ssms.exe", "Microsoft SQL Server Management Studio 20\\Common7\\IDE\\Ssms.exe"},
+		"Visual Studio":   {"Microsoft Visual Studio\\2022\\Enterprise\\Common7\\IDE\\devenv.exe", "Microsoft Visual Studio\\2019\\Enterprise\\Common7\\IDE\\devenv.exe"},
+		"Dotnet SDK":      {"dotnet\\dotnet.exe"},
+		"ASP.NET Runtime": {"dotnet\\shared\\Microsoft.AspNetCore.App\\5.0.17\\Microsoft.AspNetCore.App.Versions.txt"},
 	}
 
 	// Service Check Fallback for Middleware
@@ -346,7 +350,12 @@ func (a *App) InstallSoftware(name string) string {
 			config.NasBasePath,
 			"\\\\174.156.4.3\\fjt\\Automations-Priyanshu",
 			"\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\Basic sw",
+			"\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\Q2C",
+			"\\\\174.156.4.3\\fjt\\Automations-Priyanshu\\rabbitmq,elastic",
 			"\\\\174.156.4.3\\fjt\\Required softwares\\Automation Software\\Automations-Priyanshu",
+			"\\\\174.156.4.3\\fjt\\Required softwares\\Automation Software\\Automations-Priyanshu\\Basic sw",
+			"\\\\174.156.4.3\\fjt\\Required softwares\\Automation Software\\Automations-Priyanshu\\Q2C",
+			"\\\\174.156.4.3\\fjt\\Required softwares\\Update - Dev System",
 		}
 
 		for _, root := range nasRoots {

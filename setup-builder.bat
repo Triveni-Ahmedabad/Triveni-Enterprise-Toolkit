@@ -4,7 +4,7 @@ SET PROJECT_DIR=Triveni-Control-Center
 SET BUILD_DIR=Triveni-Build-Source
 
 echo.
-echo [ TRIVENI CMD BUILD SYSTEM - v1.13.0 ]
+echo [ TRIVENI CMD BUILD SYSTEM - v1.15.0 ]
 echo.
 
 :: 1. Dependency Check
@@ -28,8 +28,8 @@ if exist %BUILD_DIR% (
 
 :: 3. Build Process
 cd %PROJECT_DIR%
-echo Starting Wails Build (v1.13.0)...
-wails build -o Triveni-Enterprise-v1.13.0.exe
+echo Starting Wails Build (v1.15.0)...
+wails build -o Triveni-Enterprise-v1.15.0.exe
 
 :: 4. Packaging
 echo Packaging Final Binaries...
@@ -38,7 +38,7 @@ if exist "build\bin" (
     copy /y Triveni.png "build\bin\"
     echo.
     echo SUCCESS! Build ready in: %CD%\build\bin
-    echo Executable: Triveni-Enterprise-v1.13.0.exe
+    echo Executable: Triveni-Enterprise-v1.15.0.exe
 ) else (
     echo ERROR: Build failed!
 )

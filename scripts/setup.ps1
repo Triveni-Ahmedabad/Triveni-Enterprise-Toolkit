@@ -124,7 +124,11 @@ function Install-RabbitMQ {
             # ERLANG_HOME Fix
             $ErlangBase = "C:\Program Files"
             $ErlangDir = Get-ChildItem -Path $ErlangBase -Filter "erl*" -Directory | Sort-Object Name -Descending | Select-Object -First 1
-            if ($ErlangDir) { $env:ERLANG_HOME = $ErlangDir.FullName; Write-Host "   Set ERLANG_HOME: $($ErlangDir.FullName)" -ForegroundColor Gray }
+            if ($ErlangDir) { 
+                [System.Environment]::SetEnvironmentVariable("ERLANG_HOME", $ErlangDir.FullName, "Machine")
+                $env:ERLANG_HOME = $ErlangDir.FullName
+                Write-Host "   Set ERLANG_HOME (Persistent): $($ErlangDir.FullName)" -ForegroundColor Gray 
+            }
             
             Write-Host "RUN: Installing RabbitMQ (Interactive)..." -ForegroundColor Yellow
             Write-Host "... Trying Silent Install..." -ForegroundColor Gray
