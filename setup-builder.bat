@@ -11,7 +11,11 @@ echo.
 echo Checking Dependencies...
 go version >nul 2>&1 || (
     echo ERROR: Go is not installed or BLOCKED by Device Guard!
-    echo Try installing to a different location: winget install GoLang.Go --location C:\Go
+    echo.
+    echo FIX: Run these commands in Admin CMD:
+    echo 1. winget uninstall GoLang.Go
+    echo 2. winget install GoLang.Go --location C:\Go
+    echo.
     pause
     exit /b
 )

@@ -16,9 +16,10 @@ go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
 > [!TIP]
 > **Device Guard / Policy Block Error?**
-> If you see `'go.exe' was blocked by your organization's Device Guard policy`, try installing Go in a different directory:
-> `winget install GoLang.Go --location C:\Go`
-> Then add `C:\Go\bin` to your System PATH manually.
+> If you see `'go.exe' was blocked by your organization's Device Guard policy`, you must reinstall Go in a custom location:
+> 1. `winget uninstall GoLang.Go`
+> 2. `winget install GoLang.Go --location C:\Go`
+> 3. Restart your Terminal and try again.
 
 
 ## 🚀 One-Click Automated Build (Fastest)
