@@ -14,6 +14,12 @@ winget install OpenJS.NodeJS GoLang.Go Git.Git --silent
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
 ```
 
+> [!TIP]
+> **Device Guard / Policy Block Error?**
+> If you see `'go.exe' was blocked by your organization's Device Guard policy`, try installing Go in a different directory:
+> `winget install GoLang.Go --location C:\Go`
+> Then add `C:\Go\bin` to your System PATH manually.
+
 
 ## 🚀 One-Click Automated Build (Fastest)
 
