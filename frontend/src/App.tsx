@@ -268,7 +268,6 @@ function App() {
     }
 
     const filteredSoftwares = useMemo(() => {
-        if (activeTab === "All installed script status") return softwares.filter(sw => sw.is_installed);
         return softwares.filter(sw => {
             const matchesTab = sw.category === activeTab;
             const matchesSubTab = activeSubTab === "All" || sw.sub_category === activeSubTab;
@@ -285,7 +284,6 @@ function App() {
         { name: "Security check", icon: <ShieldCheck size={18} /> },
         { name: "System Optimizer", icon: <Rocket size={18} /> },
         { name: "Gmail Policy check", icon: <Mail size={18} /> },
-        { name: "All installed script status", icon: <FileCode size={18} /> },
     ];
 
     return (
